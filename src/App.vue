@@ -1,5 +1,16 @@
 <template>
-  <div id="app">黑马头条</div>
+  <div id="app">
+    <router-view></router-view>
+  </div>
 </template>
-
-<style lang="less"></style>
+<script>
+export default {}
+</script>
+<style lang="less">
+.login {
+  width: 694px;
+  height: 88px;
+  background-color: #6db4fb;
+  border-radius: 10px;
+}
+</style>
