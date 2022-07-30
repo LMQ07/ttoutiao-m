@@ -8,9 +8,12 @@ const routes = [
     path: '/login',
     // component: Login
     component: () => import('@/views/Login')
+  },
+  {
+    path: '/profile',
+    component: () => import('@/views/profile')
   }
 ]
-
 const router = new VueRouter({
   routes
 })

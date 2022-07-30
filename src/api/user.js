@@ -10,10 +10,16 @@ import request from '@/utils/request'
 // params 查询参数传参 ：‘baseUrl+/v1_0/authorizations?name=张三’
 // data 请求体传参：请求体当中携带 payLoad中可以查看
 
-export const login = (mobile, code) => {
+export const loginAPI = (mobile, code) => {
   return request({
     url: '/v1_0/authorizations',
     method: 'POST',
     data: { mobile, code }
+  })
+}
+
+export const getCodeAPI = (mobile) => {
+  return request({
+    url: `/v1_0/sms/codes/${mobile}`
   })
 }
