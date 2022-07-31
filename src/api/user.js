@@ -23,3 +23,13 @@ export const getCodeAPI = (mobile) => {
     url: `/v1_0/sms/codes/${mobile}`
   })
 }
+// 获取个人信息
+export const getUserMsgAPI = () =>
+  request({
+    url: '/v1_0/user/profile'
+  })
+// 获取个人相关点赞等数量信息
+export const getUserInfoAPI = () =>
+  request({
+    url: '/v1_0/user'
+  })

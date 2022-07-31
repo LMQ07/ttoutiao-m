@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="top">
     <!-- 二级路由 -->
     <router-view></router-view>
     <!-- 底部导航 -->
@@ -71,6 +71,9 @@ export default {
 </script>
 
 <style scoped lang="less">
+.top {
+  height: 100%;
+}
 :deep(.van-tabbar-item__text) {
   display: flex;
   flex-direction: column;

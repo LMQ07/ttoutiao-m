@@ -7,10 +7,10 @@
 export default {}
 </script>
 <style lang="less">
-.login {
-  width: 694px;
-  height: 88px;
-  background-color: #6db4fb;
-  border-radius: 10px;
+body {
+  height: 1299px;
+}
+#app {
+  height: 100%;
 }
 </style>
