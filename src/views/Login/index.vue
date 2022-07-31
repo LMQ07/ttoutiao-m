@@ -89,7 +89,7 @@ export default {
         // toast轻提示
         this.$store.commit('SET_TOKEN', data)
         // 路由跳转
-        this.$router.push('/profile')
+        this.$router.push('/my')
         this.$toast.success('登入成功')
       } catch (err) {
         // 细分一下错误

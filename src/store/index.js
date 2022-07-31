@@ -30,6 +30,11 @@ export default new Vuex.Store({
       setToken(payload)
       state.tokenObj = payload
     }
+    // 移除数据，但是一定要注意这边的操作还需要修改state里面的数据不然就没有效果
+    // REMOVE_TOKEN(state) {
+    //   removeToken()
+    //   state.tokenObj = getToken() || {}
+    // }
   },
   // 可以处理异步操作
   actions: {},
