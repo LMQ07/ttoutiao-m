@@ -11,7 +11,13 @@
             <span>{{ userMsg.name }}</span>
           </div>
           <div class="right">
-            <van-button size="mini" round class="edit">编辑资料</van-button>
+            <van-button
+              size="mini"
+              round
+              class="edit"
+              @click="$router.push('/user')"
+              >编辑资料</van-button
+            >
           </div>
         </div>
         <div class="three">
@@ -51,7 +57,7 @@
         </van-grid>
       </div>
       <div class="notice">
-        <van-nav-bar>
+        <!-- <van-nav-bar>
           <template #left>
             <span>消息通知</span>
           </template>
@@ -66,7 +72,9 @@
           <template #right>
             <van-icon name="arrow" />
           </template>
-        </van-nav-bar>
+        </van-nav-bar> -->
+        <van-cell title="消息通知" is-link clickable />
+        <van-cell title="小智童鞋" is-link clickable />
       </div>
     </main>
     <!-- 底部 -->
@@ -206,12 +214,11 @@ export default {
               right: 33px;
               top: 50%;
               transform: translateY(-50%);
-              width: 116px;
               height: 33px;
               background-color: #ffffff;
               border-radius: 16px;
               .van-button__text {
-                font-size: 20px;
+                font-size: 18px;
                 color: #666666;
               }
             }

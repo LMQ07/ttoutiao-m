@@ -33,3 +33,10 @@ export const getUserInfoAPI = () =>
   request({
     url: '/v1_0/user'
   })
+// 修改用户信息
+export const changeUserMsgAPI = (data) =>
+  request({
+    url: '/v1_0/user/profile',
+    method: 'PATCH',
+    data
+  })
