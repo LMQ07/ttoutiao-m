@@ -8,3 +8,5 @@ export * from './user'
 // 默认导出的话 引入default
 // export { default as getUser } from './user'
 export * from './channel'
+
+export * from './news'
