@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 export default {
   name: 'articleItem',
   props: {
@@ -52,10 +53,14 @@ export default {
   computed: {
     label() {
       const a = this.articleInfo
+      // console.log(dayjs)
       // 获取的时间间隔
-      const b = +new Date() - +new Date(a.pubdate)
+      const now = dayjs().$y
+      const past = dayjs(a.pubdate, 'YYYY').$y
+      const year = now - past
+      // const b = +new Date() - +new Date(a.pubdate)
       // 将获取的时间间隔变成年份
-      const year = Math.floor(b / 1000 / 60 / 60 / 24 / 365)
+      // const year = Math.floor(b / 1000 / 60 / 60 / 24 / 365)
       return `${a.aut_name} ${a.comm_count}评论  ${year}年前`
     }
   }

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
+
 // 克隆的目的就是为了如果说我们发起请求的基准地址是不一样的话 就直接克隆就可以了
 // 克隆一个
 // const request = axios.create()
@@ -29,7 +30,6 @@ request.interceptors.request.use(
     return Promise.reject(error)
   }
 )
-
 // 添加响应拦截器
 axios.interceptors.response.use(
   function (response) {

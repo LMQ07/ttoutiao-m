@@ -8,3 +8,14 @@ export const getMyChannelAPI = () =>
     //   Authorization: 'Bearer ' + store.state.tokenObj.token
     // }
   })
+// 获取所有频道数据
+export const getAllChannelAPI = () =>
+  request({
+    url: '/v1_0/channels'
+  })
+// 删除频道
+export const removeChannelAPI = (id) =>
+  request({
+    url: `/v1_0/user/channels/${id}`,
+    method: 'DELETE'
+  })
