@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { getArticleListAPI } from '@/api'
+import { getArticleListAPI, getNewsDetailAPI } from '@/api'
 import articleItem from '@/components/articleItem.vue'
 export default {
   name: 'ArticleList',
@@ -47,7 +47,8 @@ export default {
       timeStamp: '',
       finished: false,
       error: false,
-      refreshLoading: false
+      refreshLoading: false,
+      passageObj: {}
     }
   },
   created() {
@@ -83,7 +84,6 @@ export default {
         } else {
           this.articleList.push(...res.data.results)
         }
-
         // this.articleList = [...this.articleList, ...res.data.results]
         // this.loading = false
         this.timeStamp = res.data.pre_timestamp
@@ -93,6 +93,16 @@ export default {
       } finally {
         this.loading = false
         this.refreshLoading = false
+      }
+    },
+    // 获取文章信息
+    async getDetail(id) {
+      try {
+        const { data: res } = await getNewsDetailAPI(id)
+        // console.log(res)
+        this.passageObj = res.data
+      } catch (error) {
+        this.$toast.fail('获取文章数据失败！')
       }
     }
   }

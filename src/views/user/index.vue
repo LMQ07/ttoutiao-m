@@ -6,7 +6,7 @@
     <div class="message">
       <van-cell title="头像" is-link>
         <template #default>
-          <span class="img">
+          <span class="img" @click="mypicShow = true">
             <img :src="pic" alt="" />
           </span>
         </template>
@@ -98,7 +98,8 @@ export default {
       dateArr: [],
       nameShow: false,
       sexShow: false,
-      showTime: false
+      showTime: false,
+      mypicShow: false
     }
   },
   created() {
@@ -156,6 +157,10 @@ export default {
       this.changeMsg({
         birthday: `${y}-${m}-${d}`
       })
+    },
+    afterRead(file) {
+      // 此时可以自行将文件上传至服务器
+      console.log(file)
     }
   }
 }

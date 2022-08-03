@@ -1,6 +1,7 @@
 <template>
   <div class="popup">
     <!-- 我的频道 -->
+    <!-- 动态绑定类型 :class="{类名 ： 布尔值}" -->
     <van-cell title="我的频道">
       <!-- 默认插槽 -->
       <van-button size="small" round class="edit" @click="isEdit = !isEdit"
@@ -9,17 +10,14 @@
     </van-cell>
     <van-grid gutter="0.15rem">
       <van-grid-item
-        v-for="item in userChannelList"
+        v-for="(item, index) in userChannelList"
         :key="item.id"
         :text="item.name"
         class="myChannel"
+        @click="changeTabActive(index, item.id)"
       >
         <template #icon>
-          <van-icon
-            name="cross"
-            v-show="isEdit && item.id !== 0"
-            @click="delectChannel(item.id)"
-          />
+          <van-icon name="cross" v-show="isEdit && item.id !== 0" />
         </template>
       </van-grid-item>
     </van-grid>
@@ -30,56 +28,66 @@
         v-for="item in otherChannelList"
         :key="item.id"
         :text="item.name"
-        icon="plus"
         class="recommend"
-      ></van-grid-item>
+      >
+        <template #icon>
+          <van-icon name="plus" @click="addChannel(item)" />
+        </template>
+      </van-grid-item>
     </van-grid>
   </div>
 </template>
 
 <script>
-import { getMyChannelAPI, getAllChannelAPI, removeChannelAPI } from '@/api'
 export default {
   data() {
     return {
-      userChannelList: [],
-      otherChannelList: [],
       isEdit: false
     }
   },
-  created() {
-    this.getUserChannelList()
+  props: {
+    userChannelList: {
+      type: Array,
+      default: () => []
+    },
+    allChannelList: {
+      type: Array,
+      default: () => []
+    }
+  },
+  computed: {
+    otherChannelList() {
+      // 首先就是先将所有的数据都遍历一遍 然后再根据查找我的频道中是否有 如果有就不需要 如果没有就需要
+      // filter 就是筛选符合条件的项目 也就是true
+      // some就是将拿到的每一项在我的数组里面去找 如果找到就是真 没找到就是假 这个时候就是需要将假的传输出去
+      // 这个时候就需要用到取反 然后就可以拿到假数据的集合
+      return this.allChannelList.filter(
+        (item) => !this.userChannelList.some((my) => my.id === item.id)
+      )
+    }
   },
   methods: {
-    // 获取用户的频道列表
-    async getUserChannelList() {
-      try {
-        const { data: res } = await getMyChannelAPI()
-        console.log(res)
-        this.userChannelList = res.data.channels
-        this.getOtherChannel()
-      } catch (error) {
-        this.$toast.fail('获取数据失败！')
-      }
-    },
-    // 获取所有的数据并且把数据处理一下
-    async getOtherChannel() {
-      const { data: res } = await getAllChannelAPI()
-      // console.log(res)
-      const allChannel = res.data.channels
-      allChannel.filter((items) => {
-        if (!this.userChannelList.find((item) => item.id === items.id)) {
-          this.otherChannelList.push(items)
-        }
-        return this.otherChannelList
-      })
-      console.log(this.otherChannelList)
-    },
+    // 由于是点击盒子的时候需要删除 所以不给icon加事件
     // 删除频道
-    async delectChannel(id) {
-      await removeChannelAPI(id)
-      // console.log(response.status)
-      this.getUserChannelList()
+    // // 添加频道
+    async addChannel(item) {
+      this.$emit('add', item)
+    },
+    //  根据是否处于编辑状态 然后再判断是删除 还是其他操作
+    // 编辑状态： 删除频道的操作
+    // 完成状态： 关闭弹出层 同时tab栏切换
+    changeTabActive(index, id) {
+      if (!this.isEdit) {
+        // this.$parent.$parent.show = false
+        // 触发自定义事件
+        this.$emit('close', index)
+      } else {
+        // 但是需要注意如果是推荐的话就不能删除
+        if (index === 0) {
+          return
+        }
+        this.$emit('remove', id, index)
+      }
     }
   }
 }
@@ -103,7 +111,7 @@ export default {
     :deep(.van-grid-item__content) {
       flex-direction: row;
       .van-grid-item__icon {
-        font-size: 36px;
+        font-size: 30px;
       }
       .van-grid-item__icon + .van-grid-item__text {
         margin-top: 0;

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // delay不传的话就是默认是200
+    // function debounce(fn, delay = 200){
+    //   let timer = 0
+    //   return function(){
+    //     if(timer){
+    //       clearTimeout(timer)
+    //     }
+    //     timer = setTimeout(()=>{
+    //       fn.apply(this, arguments) //透传this和参数
+    //       timer = 0
+    //     },delay)
+    //   }
+    // }
+    
+    // function throttle(fn, delay = 200){
+    //   let timer = 0
+    //   return function(){
+    //     if(timer){
+    //       return
+    //     }
+    //     timer= setTimeout(()=>{
+    //       fn.apply(this, arguments) //透传this和参数
+    //       timer = 0
+    //     },delay)
+    //   }
+    // }
+    //  !function(){}
+    //  ~function(){}
+
+
+
+
+  // 封装函数求得数组之间的  交集
+  function getSame(arr1,arr2){
+    let maxArr = []
+    let minArr= []
+    if(arr1.length >= arr2.length){
+      maxArr = arr1,
+      minArr = arr2
+    } else{
+      maxArr = arr2,
+      minArr = arr1
+    }
+  return  maxArr.filter(maxItem => minArr.find(minItem=> minItem === maxItem))
+  }
+ let  arr1 = [3,5,6,7,2,8,9]
+ let arr2=[1,3,4,7,8]
+ console.log(getSame(arr1,arr2));
+//  封装函数求得数组之间的  并集
+function getCommon (arr1,arr2){
+  let arr = [...arr1, ...arr2]
+  //  reduce
+ const result= arr.reduce((pre,cur)=>{
+  if( !pre.find(item => item === cur)){
+      pre.push(cur) 
+  }
+  return pre
+  },[])
+  return result
+}
+console.log(getCommon(arr1,arr2));
+//  封装函数求得数组之间的  补集
+function getMin(arr1,arr2){
+    let maxArr = []
+    let minArr= []
+    if(arr1.length >= arr2.length){
+      maxArr = arr1,
+      minArr = arr2
+    } else{
+      maxArr = arr2,
+      minArr = arr1
+    }
+ return maxArr.filter(item => !minArr.find(mItem => mItem === item))
+  }
+  console.log(getMin(arr1,arr2));
+  </script>
+</body>
+</html>

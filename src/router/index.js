@@ -18,7 +18,13 @@ const routes = [
     children: [
       {
         path: '/ ',
-        component: () => import('@/views/home')
+        component: () => import('@/views/home'),
+        children: [
+          {
+            path: '/detail ',
+            component: () => import('@/components/articleText')
+          }
+        ]
       },
       {
         path: '/video',

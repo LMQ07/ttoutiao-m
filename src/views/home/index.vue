@@ -24,23 +24,45 @@
       closeable
       close-icon-position="top-left"
     >
-      <ChannelPopup></ChannelPopup>
+      <!--   @close="show = false" 自定义事件 -->
+      <ChannelPopup
+        :userChannelList="mychannels"
+        :allChannelList="allChannels"
+        @close="changeActive"
+        @add="addChannel"
+        @remove="removeChannel"
+      ></ChannelPopup>
     </van-popup>
   </div>
 </template>
 
 <script>
-import { getMyChannelAPI } from '@/api'
+import {
+  getMyChannelAPI,
+  getAllChannelAPI,
+  getMyChannelByLocal,
+  removeChannelAPI,
+  addChannelAPI,
+  setMyChannelsToLocal
+} from '@/api'
 import Articlelist from './components/ArticleList.vue'
 import ChannelPopup from './components/ChannelPopup.vue'
-
+// $event 模板
+// - 原生事件： 事件对象
+// - 自定义事件当中 :子组件传递过来的第一个参数
 export default {
   name: 'home',
   data() {
     return {
       active: 0,
       mychannels: [],
+      allChannels: [],
       show: false
+    }
+  },
+  computed: {
+    isLogin() {
+      return !!this.$store.state.tokenObj.token
     }
   },
   components: {
@@ -48,9 +70,25 @@ export default {
     ChannelPopup
   },
   created() {
-    this.getMyChannel()
+    // this.getMyChannel()
+    this.initMyChannels()
+    this.getAllChannel()
   },
   methods: {
+    // initmychannels 判断用户是否登录了
+    initMyChannels() {
+      if (this.isLogin) {
+        this.getMyChannel()
+      } else {
+        const localArr = getMyChannelByLocal()
+        if (localArr) {
+          this.mychannels = localArr
+        } else {
+          this.getMyChannel()
+        }
+      }
+    },
+    // 获得自己的频道
     async getMyChannel() {
       try {
         const { data: res } = await getMyChannelAPI()
@@ -58,6 +96,56 @@ export default {
       } catch (error) {
         console.log(error)
         this.$toast.fail('数据请求失败，请刷新')
+      }
+    },
+    // 获取所有的频道
+    async getAllChannel() {
+      try {
+        const { data: res } = await getAllChannelAPI()
+        this.allChannels = res.data.channels
+      } catch (error) {
+        this.$toast.fail('数据请求失败，请刷新')
+      }
+    },
+    // 自定义的事件 给到弹框所需要的， 首先关闭弹出层 然后将active的值进行修改一下
+    changeActive(index) {
+      this.show = false
+      this.active = index
+    },
+    // 添加频道
+    async addChannel(item) {
+      try {
+        if (this.isLogin) {
+          await addChannelAPI({
+            id: item.id,
+            seq: this.mychannels.length
+          })
+        } else {
+          setMyChannelsToLocal([...this.mychannels, item])
+        }
+        this.mychannels.push(item)
+      } catch {
+        this.$toast.fail('添加频道失败！')
+      }
+    },
+    // 删除频道
+    async removeChannel(id, index) {
+      this.$toast.loading({
+        message: '删除频道ing...',
+        forbidClick: true
+      })
+      try {
+        if (this.isLogin) {
+          await removeChannelAPI(id)
+        } else {
+          this.mychannels.splice(index, 1)
+          setMyChannelsToLocal(this.mychannels)
+        }
+        this.mychannels.splice(index, 1)
+        this.$toast.success('删除频道成功')
+      } catch (error) {
+        // console.log(error)
+        this.$toast.fail(error.response.data.message)
       }
     }
   }

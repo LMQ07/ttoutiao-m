@@ -14,3 +14,9 @@ export const getArticleListAPI = (channelId, timestamp) =>
       timestamp
     }
   })
+
+// 获得新闻详情
+export const getNewsDetailAPI = (id) =>
+  request({
+    url: `/v1_0/articles/${id}`
+  })
