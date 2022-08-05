@@ -43,6 +43,10 @@ const routes = [
   {
     path: '/user',
     component: () => import('@/views/user')
+  },
+  {
+    path: '/search',
+    component: () => import('@/views/search')
   }
 ]
 const router = new VueRouter({
