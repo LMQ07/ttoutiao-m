@@ -120,10 +120,10 @@ export default {
             id: item.id,
             seq: this.mychannels.length
           })
+          this.mychannels.push(item)
         } else {
           setMyChannelsToLocal([...this.mychannels, item])
         }
-        this.mychannels.push(item)
       } catch {
         this.$toast.fail('添加频道失败！')
       }
