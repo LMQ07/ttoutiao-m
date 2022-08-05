@@ -5,6 +5,7 @@
       v-for="(item, index) in highLightSuggestions"
       :key="index"
       icon="search"
+      @click="search(index)"
     >
       <template #title>
         <span v-html="item"></span>
@@ -57,7 +58,11 @@ export default {
       } catch (error) {
         this.$toast.fail('数据未获取！')
       }
-    }, 300)
+    }, 300),
+    search(index) {
+      this.$parent.keyWords = this.searchSuggestionList[index]
+      this.$emit('search')
+    }
   },
   watch: {
     // 这边不能简写的原因是当开启监听的时候 keyWords已经发生了变化，然后就导致于第一次输入的时候就不会开启

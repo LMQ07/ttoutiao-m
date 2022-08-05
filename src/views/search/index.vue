@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <!-- 搜索框 -->
     <!-- 在 van-search 外层增加 form 标签，且 action 不为空，即可在 iOS 输入法中显示搜索按钮。 -->
     <form action="/">
@@ -20,7 +20,11 @@
     <searchResult></searchResult>
     <searchHistory></searchHistory> -->
     <!-- 动态渲染组件 根据is里面的内容 然后动态选择组件进行渲染-->
-    <component :is="componentName" :keyWords="keyWords"></component>
+    <component
+      :is="componentName"
+      :keyWords="keyWords"
+      @search="onSearch"
+    ></component>
   </div>
 </template>
 
@@ -29,14 +33,14 @@
 import searchResult from './components/searchResult.vue'
 import searchHistory from './components/searchHistory.vue'
 import searchSuggestion from './components/searchSuggestion.vue'
-
 export default {
   name: 'Search',
   data() {
     return {
       keyWords: '',
       // 判断用户是否在搜索
-      isSearch: false
+      isSearch: false,
+      keyWordsList: this.$store.state.searchList
     }
   },
   computed: {
@@ -62,9 +66,13 @@ export default {
       this.$router.back()
     },
     // 搜索功能
-    onSearch() {
+    async onSearch() {
       this.isSearch = true
-      console.log('qqq')
+      // 先判断搜索的内容原先的数组里面有没有 没有就添加 有的话就不添加
+      if (this.keyWordsList.indexOf(this.keyWords) === -1) {
+        this.keyWordsList.unshift(this.keyWords)
+        this.$store.commit('SET_SEARCHLIST', this.keyWordsList)
+      }
     },
     // 搜索框进行聚焦的时候，然后进行展示的是搜索建议
     onFocus() {
@@ -75,10 +83,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
+form {
+  height: 108px;
+}
 .search {
   [role='button'] {
     color: #fff;
     background-color: transparent;
   }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 108px;
+  z-index: 99;
 }
 </style>

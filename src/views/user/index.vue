@@ -4,12 +4,20 @@
     <van-nav-bar title="个人信息" left-arrow @click-left="$router.back()" />
     <!-- 信息栏 -->
     <div class="message">
-      <van-cell title="头像" is-link>
-        <template #default>
-          <span class="img" @click="mypicShow = true">
-            <img :src="pic" alt="" />
-          </span>
-        </template>
+      <!-- 用户选择文件的表单 -->
+      <!-- input type="file"的属性 -->
+      <!-- accept：显示file选择的文件后缀名规定用户只能上传什么格式的图片，hidden：隐藏  input：file-->
+      <!-- ref可以获取到这个按钮本身 -->
+      <van-cell title="头像" is-link @click="$refs.file.click()">
+        <van-image round width="0.8rem" height="0.8rem" :src="pic" />
+        <!-- 当input框发现变化的时候 -->
+        <input
+          type="file"
+          hidden
+          accept=".png,.jfif"
+          ref="file"
+          @change="selectPhoto"
+        />
       </van-cell>
       <van-cell
         title="昵称"
@@ -79,12 +87,24 @@
         @cancel="showTime = false"
       />
     </div>
+    <!-- 头像弹出层 -->
+    <van-popup
+      v-model="showPopup"
+      closeable
+      :style="{ height: '100%', width: '100%' }"
+      position="bottom"
+      class="popup"
+    >
+      <userAvantor></userAvantor>
+    </van-popup>
   </div>
 </template>
 
 <script>
+import userAvantor from './components/userAvantor.vue'
 import { getUserMsgAPI, changeUserMsgAPI } from '@/api'
 export default {
+  components: { userAvantor },
   data() {
     return {
       pic: '',
@@ -99,7 +119,8 @@ export default {
       nameShow: false,
       sexShow: false,
       showTime: false,
-      mypicShow: false
+      mypicShow: false,
+      showPopup: false
     }
   },
   created() {
@@ -161,6 +182,10 @@ export default {
     afterRead(file) {
       // 此时可以自行将文件上传至服务器
       console.log(file)
+    },
+    selectPhoto() {
+      // 头像弹出层显示
+      this.showPopup = true
     }
   }
 }
@@ -182,18 +207,6 @@ export default {
       color: #969799;
     }
   }
-  .img {
-    display: inline-block;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #dcdee0;
-  }
-  img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-  }
 }
 .name {
   :deep(.van-nav-bar__title) {
@@ -205,5 +218,8 @@ export default {
   :deep(.van-icon) {
     color: #1989fa;
   }
+}
+.popup {
+  background-color: #000;
 }
 </style>

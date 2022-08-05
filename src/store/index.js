@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 // 封装了一个存储函数
-// import storage from '@/utils/storage'
+import storage from '@/utils/storage'
 import { setToken, getToken } from '@/utils/auth'
 Vue.use(Vuex)
 // vuex
@@ -17,7 +17,9 @@ export default new Vuex.Store({
     // {}是为了防止一个报错 null.token就会报错，{}.token就是undefined,但是不会报错
     // tokenObj: JSON.parse(localStorage.getItem('Token')) || {}
     // tokenObj: storage.get('Token') || {}
-    tokenObj: getToken() || {}
+    tokenObj: getToken() || {},
+    // 搜索记录的保存
+    searchList: storage.get('searchList') || []
   },
   // 根据state的数据派生出来的数据
   getters: {},
@@ -29,12 +31,11 @@ export default new Vuex.Store({
       // storage.set('Token', payload)
       setToken(payload)
       state.tokenObj = payload
+    },
+    SET_SEARCHLIST(state, newArr) {
+      state.searchList = newArr
+      storage.set('searchList', newArr)
     }
-    // 移除数据，但是一定要注意这边的操作还需要修改state里面的数据不然就没有效果
-    // REMOVE_TOKEN(state) {
-    //   removeToken()
-    //   state.tokenObj = getToken() || {}
-    // }
   },
   // 可以处理异步操作
   actions: {},
