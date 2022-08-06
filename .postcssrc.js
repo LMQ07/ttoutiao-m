@@ -16,7 +16,8 @@ module.exports = {
       // 简写
       rootValue: ({ file }) => (/vant/i.test(file) ? 37.5 : 75),
       // 哪些属性需要转换成rem *表示匹配所有
-      propList: ['*']
+      propList: ['*'],
+      exclude: 'github-markdown'
     }
   }
 }

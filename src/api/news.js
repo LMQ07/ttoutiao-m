@@ -20,3 +20,20 @@ export const getNewsDetailAPI = (id) =>
   request({
     url: `/v1_0/articles/${id}`
   })
+
+// 收藏文章
+export const collectPassageAPI = (id) =>
+  request({
+    url: '/v1_0/article/collections',
+    method: 'POST',
+    data: {
+      target: id
+    }
+  })
+
+// 取消收藏文章
+export const cancelCollectAPI = (id) =>
+  request({
+    url: `/v1_0/article/collections/${id}`,
+    method: 'DELETE'
+  })

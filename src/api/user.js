@@ -60,3 +60,19 @@ export const uploadAvantorAPI = (file) => {
     data: fm
   })
 }
+// 关注用户
+export const getFocusAPI = (id) =>
+  request({
+    url: '/v1_0/user/followings',
+    method: 'POST',
+    data: {
+      target: id
+    }
+  })
+
+// 取消关注
+export const cancelFocusAPI = (id) =>
+  request({
+    url: `/v1_0/user/followings/${id}`,
+    method: 'DELETE'
+  })

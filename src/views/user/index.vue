@@ -14,7 +14,7 @@
         <input
           type="file"
           hidden
-          accept=".png,.jfif,.webp"
+          accept=".png,.jfif,.webp,.jpeg"
           ref="file"
           @change="selectPhoto"
         />
@@ -70,6 +70,7 @@
       <van-popup v-model="sexShow" position="bottom" :style="{ height: '50%' }">
         <van-picker
           title="更新性别"
+          :default-index="sex"
           show-toolbar
           :columns="columns"
           @confirm="changeUserSex"

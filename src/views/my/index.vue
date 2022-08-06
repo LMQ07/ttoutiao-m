@@ -154,7 +154,7 @@ export default {
 
 <style scoped lang="less">
 .my {
-  height: 100%;
+  height: 100vh;
   background-color: #f5f7f9;
   .logout {
     width: 750px;
