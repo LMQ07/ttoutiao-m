@@ -40,3 +40,23 @@ export const changeUserMsgAPI = (data) =>
     method: 'PATCH',
     data
   })
+// 修改用户图片
+// 如果说的传的是对象，axios会默认的将对象转化称为json 并且默认的会加上content-type:application/json
+// 如果说后端需要的数据是multipart/form-data，那么也就是说后端需要的是表单数据
+// 表单数据的处理
+// const fm = new FormDate()
+// fm.append(表单的name, 表单项)
+/**
+ * 修改用户对象的
+ * @param {*} file 图片的file对象
+ * @returns promise
+ */
+export const uploadAvantorAPI = (file) => {
+  const fm = new FormData()
+  fm.append('photo', file)
+  return request({
+    url: '/v1_0/user/photo',
+    method: 'PATCH',
+    data: fm
+  })
+}

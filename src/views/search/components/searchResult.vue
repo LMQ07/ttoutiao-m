@@ -12,7 +12,7 @@
         v-for="(item, index) in resultList"
         :key="index"
         :title="item.title"
-        @click="getPassageDetail(item.id)"
+        @click="getPassageDetail(item.art_id)"
       />
     </van-list>
   </div>
@@ -42,13 +42,21 @@ export default {
   },
   methods: {
     // 获取文章的详情
-    getPassageDetail(id) {},
+    getPassageDetail(id) {
+      this.$router.push({
+        path: '/detail',
+        query: {
+          articleId: id
+        }
+      })
+    },
     // 获取第一页搜索结果
     async getFirsetPageSearchResult() {
       // 获取搜索结果
       try {
         const { data: res } = await getSearchResultAPI({ q: this.keyWords })
         this.resultList = res.data.results
+        // console.log(res)
         this.getMoreSearch()
       } catch {
         this.$toast.fail('获取数据失败！请重试')
@@ -81,5 +89,8 @@ export default {
 .van-list {
   max-height: calc(100vh - 54px);
   overflow: auto;
+}
+:deep(.van-list__placeholder) {
+  height: 37px;
 }
 </style>

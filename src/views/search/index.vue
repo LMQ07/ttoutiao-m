@@ -98,4 +98,7 @@ form {
   height: 108px;
   z-index: 99;
 }
+.container {
+  overflow: hidden;
+}
 </style>

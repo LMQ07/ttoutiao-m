@@ -9,8 +9,6 @@ export default {}
 <style lang="less">
 body {
   height: 1299px;
-}
-#app {
-  height: 100%;
+  overflow: hidden;
 }
 </style>

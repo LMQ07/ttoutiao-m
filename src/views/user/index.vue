@@ -14,7 +14,7 @@
         <input
           type="file"
           hidden
-          accept=".png,.jfif"
+          accept=".png,.jfif,.webp"
           ref="file"
           @change="selectPhoto"
         />
@@ -95,7 +95,11 @@
       position="bottom"
       class="popup"
     >
-      <userAvantor></userAvantor>
+      <userAvantor
+        @updatePhoto="pic = $event"
+        :imgUrl="imgUrl"
+        v-if="showPopup"
+      ></userAvantor>
     </van-popup>
   </div>
 </template>
@@ -103,6 +107,7 @@
 <script>
 import userAvantor from './components/userAvantor.vue'
 import { getUserMsgAPI, changeUserMsgAPI } from '@/api'
+import { getPhotoBase64 } from '@/utils/photo'
 export default {
   components: { userAvantor },
   data() {
@@ -120,7 +125,8 @@ export default {
       sexShow: false,
       showTime: false,
       mypicShow: false,
-      showPopup: false
+      showPopup: false,
+      imgUrl: ''
     }
   },
   created() {
@@ -138,7 +144,7 @@ export default {
       this.nickname = res.data.name
       this.sex = res.data.gender
       this.birthday = res.data.birthday
-      this.dateArr = this.birthday.split('-')
+      this.dateArr = this.birthday && this.birthday.split('-')
       const [a, b, c] = this.dateArr
       this.currentDate = new Date(a, b - 1, c)
     },
@@ -179,11 +185,33 @@ export default {
         birthday: `${y}-${m}-${d}`
       })
     },
-    afterRead(file) {
-      // 此时可以自行将文件上传至服务器
-      console.log(file)
-    },
-    selectPhoto() {
+    // 选择用户的图片对象
+    async selectPhoto(e) {
+      // 1.获取用户选择的图片的文件对象
+      // e.target 触发事件的元素
+      // HTMLInputElement.files[0] 伪元素，存储的用户选择的图片
+      // console.dir(this.$refs.file)
+      const file = e.target.files[0]
+      // 把file文件对象处理成img标签可以识别的URl
+      // window.URL.createObjectURL(file对象) 可以转换成img标签可识别格式
+      // 这个方式会造成内存泄漏 是于document绑定一起 同生共死 你死我也死 你不死 我也不死
+      // const url = window.URL.createObjectURL(file)
+      // FileReader window身上的内置属性 用于处理成base64的格式 readAsDataURL()
+      // // 先创建一个实例对象
+      // const fr = new FileReader()
+      // // 使用这个对象身上的方法读取文件中的内容
+      // fr.readAsDataURL(file)
+      // // 由于这个读取事件是异步的，所以需要用箭头函数去进行操作
+      // fr.onload = (e) => {
+      //   this.imgUrl = e.target.result
+      // }
+      // console.log(url)
+      // 3.传递url
+      // this.imgUrl = url
+      // 清空value 可以让用户选择同一张图片 因为我们就是只绑定了change事件 如果没清空 选择同一张就没有改变
+      const url = await getPhotoBase64(file)
+      this.imgUrl = url
+      e.target.value = ''
       // 头像弹出层显示
       this.showPopup = true
     }
