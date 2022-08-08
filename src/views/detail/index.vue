@@ -121,11 +121,7 @@
         :style="{ height: '100%' }"
       >
         <!-- 返回 -->
-        <van-nav-bar
-          title="暂无回复"
-          left-arrow
-          @click-left="replayList = false"
-        />
+        <van-nav-bar title="暂无回复" left-arrow @click-left="back" />
         <!-- 首部内容 -->
         <van-cell class="top">
           <template #title>
@@ -303,6 +299,11 @@ export default {
       } catch (error) {
         this.$toast.fail('发布失败')
       }
+    },
+    // 返回
+    back() {
+      this.replayList = false
+      this.create = false
     }
   }
 }

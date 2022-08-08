@@ -1,7 +1,10 @@
 <template>
   <div class="top">
     <!-- 二级路由 -->
-    <router-view></router-view>
+    <transition mode="out-in">
+      <router-view></router-view>
+    </transition>
+
     <!-- 底部导航 -->
     <!-- route 开启路由模式 -->
     <!-- 拿到path 和每一个 tabbaritem的to属性对比 一致就高亮-->
@@ -84,5 +87,13 @@ export default {
   .toutiao {
     font-size: 40px;
   }
+}
+.v-enter-active,
+.v-leave-active {
+  transition: translateX(0) ease;
+}
+.v-enter, .v-leave-to
+/* .component-fade-leave-active for below version 2.1.8 */ {
+  transform: translateX(-100%);
 }
 </style>
