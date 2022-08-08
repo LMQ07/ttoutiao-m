@@ -45,14 +45,18 @@
         </template>
       </van-cell>
       <!-- 文章信息 -->
-      <div
-        class="article-content markdown-body passageText"
-        v-html="passageObj.content"
-      ></div>
-      <br />
-      <br />
-      <van-divider>正文结束</van-divider>
-      <commentList class="list" :id="passageObj.art_id"></commentList>
+      <div class="article-content markdown-body passageText" v-if="passageObj">
+        <div v-html="passageObj.content"></div>
+        <van-divider>正文结束</van-divider>
+        <list
+          class="list"
+          :source="passageObj.art_id"
+          :type="'a'"
+          v-if="show"
+        ></list>
+      </div>
+      <div v-else>资源不存在，或者已经被删除了</div>
+
       <!-- 底部导航 -->
       <van-tabbar class="bottomBar">
         <van-tabbar-item>
@@ -88,6 +92,7 @@
         v-model="showComment"
         position="bottom"
         :style="{ height: '20%' }"
+        class="topPop"
       >
         <van-field
           v-model.trim="message"
@@ -99,7 +104,78 @@
           show-word-limit
         >
           <template #extra>
-            <van-button class="push" :class="{ deep: message.length === 0 }"
+            <van-button
+              class="push"
+              :disabled="!message.trim().length"
+              @click="submitComment(passageObj.art_id)"
+              >发布</van-button
+            >
+          </template></van-field
+        >
+      </van-popup>
+      <!-- <commentPopup v-show="showComment" :id="passageObj.art_id"></commentPopup> -->
+      <!-- 回复列表的弹框 -->
+      <van-popup
+        v-model="replayList"
+        position="bottom"
+        :style="{ height: '100%' }"
+      >
+        <!-- 返回 -->
+        <van-nav-bar
+          title="暂无回复"
+          left-arrow
+          @click-left="replayList = false"
+        />
+        <!-- 首部内容 -->
+        <van-cell class="top">
+          <template #title>
+            <span class="name">{{ replayItem.aut_name }}</span>
+            <p class="text">{{ replayItem.content }}</p>
+            <p class="replay">
+              {{ replayItem.pubdate | reaTime }}
+              <van-button size="mini" type="default" round>
+                回复{{ replayItem.replay_count }}
+              </van-button>
+            </p>
+          </template>
+          <template>
+            <van-icon name="good-job-o" />
+            <span>赞</span>
+          </template>
+          <template #icon>
+            <img :src="replayItem.aut_photo" alt="" class="avantor" />
+          </template>
+        </van-cell>
+        <!-- 对于该评论的回复列表 -->
+        <list :type="'c'" :source="replayItem.com_id" v-if="create"></list>
+        <!-- 最下面的发布 -->
+        <van-tabbar>
+          <van-tabbar-item @click="commentReplayShow = true">
+            发布评论
+          </van-tabbar-item>
+        </van-tabbar>
+      </van-popup>
+      <!-- 发表评论的评论弹框 -->
+      <van-popup
+        v-model="commentReplayShow"
+        position="bottom"
+        :style="{ height: '20%' }"
+        class="topPop"
+      >
+        <van-field
+          v-model.trim="message"
+          rows="2"
+          autosize
+          type="textarea"
+          maxlength="50"
+          placeholder="请输入留言"
+          show-word-limit
+        >
+          <template #extra>
+            <van-button
+              class="push"
+              :disabled="!message.trim().length"
+              @click="submitCommentReply(replayItem.com_id)"
               >发布</van-button
             >
           </template></van-field
@@ -110,13 +186,15 @@
 </template>
 
 <script>
-import commentList from './components/commentList.vue'
+import list from './components/list.vue'
+
 import {
   getNewsDetailAPI,
   getFocusAPI,
   cancelFocusAPI,
   collectPassageAPI,
-  cancelCollectAPI
+  cancelCollectAPI,
+  writeCommentAPI
 } from '@/api'
 import '@/assets/css/github-markdown.css'
 export default {
@@ -124,10 +202,15 @@ export default {
     return {
       passageObj: {},
       showComment: false,
-      message: ''
+      message: '',
+      show: false,
+      replayList: false,
+      replayItem: {},
+      commentReplayShow: false,
+      create: false
     }
   },
-  components: { commentList },
+  components: { list },
   created() {
     this.getDetail()
   },
@@ -140,6 +223,9 @@ export default {
         const { data: res } = await getNewsDetailAPI(id)
         console.log(res)
         this.passageObj = res.data
+        console.log(this.passageObj.art_id)
+        // 子组件控制
+        this.show = true
         this.$toast.success('欢迎来到知识的海洋')
       } catch (error) {
         this.$toast.fail('获取文章数据失败！')
@@ -181,6 +267,42 @@ export default {
       } catch (error) {
         this.$toast.fail('取消收藏失败！')
       }
+    },
+    // 发布对文章评论
+    async submitComment(ID) {
+      this.show = false
+      try {
+        await writeCommentAPI({
+          target: ID,
+          content: this.message
+        })
+        this.$toast.success('发布成功')
+        this.show = true
+        this.showComment = false
+        this.message = ''
+      } catch {
+        this.$toast.fail('发布失败')
+      }
+    },
+    // 发布对评论的评论
+    async submitCommentReply(ID) {
+      this.showComment = false
+      this.create = false
+      try {
+        await writeCommentAPI({
+          target: ID,
+          content: this.message,
+          art_id: this.passageObj.art_id
+        })
+        this.$toast.success('发布成功')
+        this.commentReplayShow = false
+        this.message = ''
+        this.$nextTick(() => {
+          this.create = true
+        })
+      } catch (error) {
+        this.$toast.fail('发布失败')
+      }
     }
   }
 }
@@ -190,7 +312,7 @@ export default {
 .main {
   height: calc(100vh - 92px);
   overflow: auto;
-  padding-bottom: 150px;
+
   .title {
     font-size: 0.53333rem;
     padding: 0.66667rem 0.42667rem;
@@ -246,9 +368,50 @@ export default {
   }
   .passageText {
     padding: 0 30px;
+    padding-bottom: 150px !important;
   }
-  .list {
-    margin-bottom: 150px;
+  .top {
+    :deep(.van-icon) {
+      margin-left: 15px;
+    }
+    .avantor {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+    }
+    :deep(.van-cell__title) {
+      display: flex;
+      flex-direction: column;
+      .name {
+        color: rgb(70, 107, 157);
+      }
+      .text {
+        margin-top: 0;
+        margin-bottom: 0.42667rem;
+      }
+      .replay {
+        color: #969799;
+        font-size: 0.25rem;
+        line-height: 0.48rem;
+        display: flex;
+        align-items: center;
+      }
+    }
+    :deep(.van-button--round) {
+      width: 2.2rem;
+      height: 0.64rem;
+      line-height: 0.64rem;
+      font-size: 0.28rem;
+      color: #222;
+      margin: 0 15px;
+    }
+    :deep(.van-tabbar-item--active) {
+      color: #666;
+      font-size: 0.37333rem;
+    }
+    .topPop {
+      z-index: 999;
+    }
   }
 }
 </style>

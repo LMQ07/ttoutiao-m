@@ -7,11 +7,10 @@ export const writeCommentAPI = (data) =>
     data
   })
 // 获取评论
-export const getCommentAPI = (obj) => {
+export const getCommentAPI = (obj) =>
   request({
     url: '/v1_0/comments',
     params: {
       ...obj
     }
   })
-}

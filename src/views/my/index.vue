@@ -80,7 +80,7 @@
     <!-- 底部 -->
     <footer>
       <!-- 退出按钮 -->
-      <div class="footer" @click="logout">
+      <div class="footer" @click="logout" v-if="isLogin">
         <span>退出</span>
       </div>
     </footer>

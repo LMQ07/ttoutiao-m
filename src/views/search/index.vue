@@ -67,11 +67,18 @@ export default {
     },
     // 搜索功能
     async onSearch() {
+      if (this.keyWords.trim().length === 0) {
+        return
+      }
       this.isSearch = true
       // 先判断搜索的内容原先的数组里面有没有 没有就添加 有的话就不添加
       if (this.keyWordsList.indexOf(this.keyWords) === -1) {
         this.keyWordsList.unshift(this.keyWords)
         this.$store.commit('SET_SEARCHLIST', this.keyWordsList)
+      } else {
+        const index = this.keyWordsList.indexOf(this.keyWords)
+        this.keyWordsList.splice(index, 1)
+        this.keyWordsList.unshift(this.keyWords)
       }
     },
     // 搜索框进行聚焦的时候，然后进行展示的是搜索建议
