@@ -83,7 +83,17 @@
           v-else
           @click="cancelCollect(passageObj.art_id)"
         ></van-tabbar-item>
-        <van-tabbar-item icon="good-job-o"></van-tabbar-item>
+        <van-tabbar-item
+          icon="good-job-o"
+          v-if="passageObj.attitude === -1"
+          @click="likePassage(passageObj.art_id)"
+        ></van-tabbar-item>
+        <van-tabbar-item
+          icon="good-job"
+          class="yellow"
+          v-else
+          @click="disLikePassage(passageObj.art_id)"
+        ></van-tabbar-item>
         <van-tabbar-item icon="share"></van-tabbar-item>
       </van-tabbar>
 
@@ -190,7 +200,9 @@ import {
   cancelFocusAPI,
   collectPassageAPI,
   cancelCollectAPI,
-  writeCommentAPI
+  writeCommentAPI,
+  likePassageAPI,
+  cancalLikeAPI
 } from '@/api'
 import '@/assets/css/github-markdown.css'
 export default {
@@ -304,6 +316,24 @@ export default {
     back() {
       this.replayList = false
       this.create = false
+    },
+    // 点赞
+    likePassage(id) {
+      try {
+        likePassageAPI(id)
+        this.passageObj.attitude = 1
+      } catch {
+        this.$toast.fail('点赞失败')
+      }
+    },
+    // 取消点赞
+    disLikePassage(id) {
+      try {
+        cancalLikeAPI(id)
+        this.passageObj.attitude = -1
+      } catch {
+        this.$toast.fail('取消失败')
+      }
     }
   }
 }

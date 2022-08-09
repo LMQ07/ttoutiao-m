@@ -9,6 +9,7 @@
         name="mobile"
         placeholder="请输入手机号"
         :rules="mobileRule"
+        clearable
       >
         <template #label>
           <span class="toutiao toutiao-shouji1"></span>

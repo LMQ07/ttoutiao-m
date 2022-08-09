@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { method } from 'lodash'
 /**
  *
  * @param {*} channelId 频道ID
@@ -37,3 +38,19 @@ export const cancelCollectAPI = (id) =>
     url: `/v1_0/article/collections/${id}`,
     method: 'DELETE'
   })
+// 对文章点赞
+export const likePassageAPI = (id) =>
+  request({
+    url: '/v1_0/article/likings',
+    method: 'POST',
+    data: {
+      target: id
+    }
+  })
+// 取消点赞
+export const cancalLikeAPI = (id) => {
+  return request({
+    url: `/v1_0/article/likings/${id}`,
+    method: 'DELETE'
+  })
+}
