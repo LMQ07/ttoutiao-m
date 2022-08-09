@@ -45,7 +45,11 @@
         </template>
       </van-cell>
       <!-- 文章信息 -->
-      <div class="article-content markdown-body passageText" v-if="passageObj">
+      <div
+        class="article-content markdown-body passageText"
+        ref="passage"
+        v-if="passageObj"
+      >
         <div v-html="passageObj.content"></div>
         <van-divider>正文结束</van-divider>
         <list
@@ -187,6 +191,16 @@
           </template></van-field
         >
       </van-popup>
+      <!-- 图片预览 -->
+      <van-image-preview
+        v-model="Imgshow"
+        :images="imgArrList"
+        @change="onChange"
+        :start-position="startPosition"
+        :closeable="true"
+      >
+        <template v-slot:index>第{{ index }}页</template>
+      </van-image-preview>
     </div>
   </div>
 </template>
@@ -215,12 +229,31 @@ export default {
       replayList: false,
       replayItem: {},
       commentReplayShow: false,
-      create: false
+      create: false,
+      imgArrList: [],
+      index: 1,
+      Imgshow: false,
+      startPosition: 1
     }
   },
   components: { list },
   created() {
     this.getDetail()
+  },
+  mounted() {
+    // setTimeout(() => {
+    //   const imgArr = document.querySelectorAll('img')
+    //   console.log(imgArr)
+    //   this.imgArrList = []
+    //   imgArr.forEach((item, index) => {
+    //     console.log(item)
+    //     item.addEventListener('click', function () {
+    //       console.log(111)
+    //     })
+    //     this.imgArrList.push(item.src)
+    //   })
+    //   console.log(this.imgArrList)
+    // }, 0)
   },
   methods: {
     // 获取文章信息
@@ -231,13 +264,33 @@ export default {
         const { data: res } = await getNewsDetailAPI(id)
         console.log(res)
         this.passageObj = res.data
-        console.log(this.passageObj.art_id)
+        // setTimeout(() => {
+        //   this.getImgList()
+        // }, 0)
+        // $nextTick需要传一个回调函数
+        this.$nextTick(() => {
+          this.getImgList()
+        })
         // 子组件控制
         this.show = true
         this.$toast.success('欢迎来到知识的海洋')
       } catch (error) {
         this.$toast.fail('获取文章数据失败！')
       }
+    },
+    // 获取图片列表
+    getImgList() {
+      const imgArr = this.$refs.passage.querySelectorAll('img')
+      console.log(imgArr)
+      imgArr.forEach((item, index) => {
+        console.log(item)
+        item.addEventListener('click', () => {
+          this.Imgshow = true
+          this.startPosition = index
+          this.index = index + 1
+        })
+        this.imgArrList.push(item.src)
+      })
     },
     // 关注作者
     async gotFocus(id) {
@@ -259,18 +312,18 @@ export default {
       }
     },
     // 收藏
-    collectPassage(id) {
+    async collectPassage(id) {
       try {
-        collectPassageAPI(id)
+        await collectPassageAPI(id)
         this.passageObj.is_collected = true
       } catch (error) {
         this.$toast.fail('收藏失败！')
       }
     },
     // 取消收藏
-    cancelCollect(id) {
+    async cancelCollect(id) {
       try {
-        cancelCollectAPI(id)
+        await cancelCollectAPI(id)
         this.passageObj.is_collected = false
       } catch (error) {
         this.$toast.fail('取消收藏失败！')
@@ -318,22 +371,26 @@ export default {
       this.create = false
     },
     // 点赞
-    likePassage(id) {
+    async likePassage(id) {
       try {
-        likePassageAPI(id)
+        await likePassageAPI(id)
         this.passageObj.attitude = 1
       } catch {
         this.$toast.fail('点赞失败')
       }
     },
     // 取消点赞
-    disLikePassage(id) {
+    async disLikePassage(id) {
       try {
-        cancalLikeAPI(id)
+        await cancalLikeAPI(id)
         this.passageObj.attitude = -1
       } catch {
         this.$toast.fail('取消失败')
       }
+    },
+    // 图片预览
+    onChange(index) {
+      this.index = index + 1
     }
   }
 }

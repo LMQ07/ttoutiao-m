@@ -10,6 +10,7 @@ import filter from '@/utils/dayjs'
 import 'amfe-flexible/index.min.js'
 Vue.use(filter)
 Vue.config.productionTip = false
+// Vue.use(ImagePreview)
 Vue.use(Vant)
 new Vue({
   router,

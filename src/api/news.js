@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { method } from 'lodash'
 /**
  *
  * @param {*} channelId 频道ID
